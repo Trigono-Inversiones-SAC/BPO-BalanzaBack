@@ -17,4 +17,6 @@ urlpatterns = [
     path('detect_weight/detener/', DetenerBalanzaView.as_view(), name='detener'),
     path('detect_weight/', GetPesoView.as_view(), name='get-peso'),
     
+    # Exportar a excel
+    path('exportar_excel/', ExportarExcelRegistroPesoView.as_view(), name='exportar-excel'),
 ] + router.urls
