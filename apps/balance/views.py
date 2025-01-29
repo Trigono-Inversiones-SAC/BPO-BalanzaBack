@@ -1,10 +1,12 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
+from django.http import HttpResponse
 from .odoo.odoo_ordenes_compra import get_entidad_origen_y_material
 from .serializers import *
 from .models import *
 from .services.DetectWeigth import BalanzaService
+from .utils import *
 
 class DetailOrdenCompra(APIView):
     def get(self, request, orden_compra, *args, **kwargs):
@@ -47,3 +49,17 @@ class GetPesoView(APIView):
         trama = balanza.trama_actual
         return Response({'peso': peso, 'trama':trama}, status=status.HTTP_200_OK)
     
+# Exportar a excel
+class ExportarExcelRegistroPesoView(APIView):
+    def get(self, request, *args, **kwargs):
+        registros_pesos = generar_excel_registro_peso()
+        filename = "registro_pesos.xlsx"
+
+        # Armamos la respuesta HTTP
+        response = HttpResponse(
+            registros_pesos,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        )
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+
+        return response
